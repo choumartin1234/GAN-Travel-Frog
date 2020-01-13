@@ -1,0 +1,34 @@
+<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:app="http://schemas.android.com/apk/res/com.ying.travelfrogg"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent">-->
+
+<!--    <com.ying.travelfrogg.DrawingView-->
+<!--        android:layout_width="300dp"-->
+<!--        android:layout_height="300dp"-->
+<!--        android:background="#ccc"-->
+<!--        android:paddingLeft="20dp"-->
+<!--        android:paddingBottom="40dp"-->
+<!--        app:exampleColor="#33b5e5"-->
+<!--        app:exampleDimension="24sp"-->
+<!--        app:exampleDrawable="@android:drawable/ic_menu_add"-->
+<!--        app:exampleString="Hello, DrawingView" />-->
+
+<!--</FrameLayout>-->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DrawActivity" >
+
+    <com.ying.travelfrogg.DrawingView
+        android:id="@+id/drawingView"
+        android:layout_width="300px"
+        android:layout_height="300px"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true" />
+
+</RelativeLayout>

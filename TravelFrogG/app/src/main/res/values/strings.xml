@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">GANFrog</string>
+    <string name="start_app">开始</string>
+    <string name="please_name">为你的蛙蛙取个名字吧！</string>
+    <string name="default_name">蛙蛙</string>
+    <string name="confirm">确认</string>
+    <string name="save">蛙蛙，启程！</string>
+</resources>
