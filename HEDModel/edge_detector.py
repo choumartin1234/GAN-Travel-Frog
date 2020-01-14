@@ -4,6 +4,7 @@ import os
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 parser = argparse.ArgumentParser(
         description='This sample shows how to define custom OpenCV deep learning layers in Python. '
@@ -48,10 +49,11 @@ net = cv.dnn.readNetFromCaffe(args.prototxt, args.caffemodel)
 cv.dnn_registerLayer('Crop', CropLayer)
 
 #Create saved dir
-if not os.path.exists("./pix/"):
-    os.makedirs("./pix/")
-if not os.path.exists("./real/"):
-    os.makedirs("./real/")
+if not os.path.exists("./dataset/"):
+    os.makedirs("./dataset/")
+
+
+cnt=1
 
 def process_img(image,name):
     image=cv.resize(image,(args.width,args.height))
@@ -72,16 +74,16 @@ def process_img(image,name):
     #print(np.min(out))
     #print(out.shape)
     #print(image.shape)
-    #con=np.concatenate((image,out),axis=1)
-    cv.imwrite('./pix/'+name,out)
-    cv.imwrite('./real/'+name,image)
+    con=np.concatenate((image,out),axis=1)
+    cv.imwrite(os.path.join('./dataset',str(cnt)+'.jpg'),con)
 
 if args.all:
     paths = glob.glob('./*.jpg')
-    for path in paths:
+    for path in tqdm(paths):
         # Do not contain Chinese characters in filename !
         image=cv.imread(path)
         process_img(image,path)
+        cnt = cnt+1
         #print(os.path.join(path, path))
 else:
     image=cv.imread(args.input)
