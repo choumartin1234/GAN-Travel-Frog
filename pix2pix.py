@@ -242,7 +242,7 @@ def generate_images(model, test_input, tar):
         plt.axis('off')
     # plt.show()
     cnt += 1
-    plt.savefig('pictures/test_{}.jpg'.format(cnt))
+    plt.savefig('pictures/test_{}.png'.format(cnt))
 
 
 import datetime
@@ -253,7 +253,7 @@ summary_writer = tf.summary.create_file_writer(log_dir + "fit/" + datetime.datet
 
 
 @tf.function
-def train_step(input_image, target, epoch):
+def train_step(input_image, target, epoch, step):
     with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
         gen_output = generator(input_image, training=True)
         disc_real_output = discriminator([input_image, target], training=True)
@@ -266,6 +266,12 @@ def train_step(input_image, target, epoch):
     discriminator_gradients = disc_tape.gradient(disc_loss, discriminator.trainable_variables)
     generator_optimizer.apply_gradients(zip(generator_gradients, generator.trainable_variables))
     discriminator_optimizer.apply_gradients(zip(discriminator_gradients, discriminator.trainable_variables))
+    print('epoch:{},step:{},gen_total_loss:{},gen_gan_loss:{},gen_l1_loss:{},disc_loss:{}'.format(epoch, step,
+                                                                                                  gen_total_loss,
+                                                                                                  gen_gan_loss,
+                                                                                                  gen_l1_loss,
+                                                                                                  disc_loss))
+
     with summary_writer.as_default():
         tf.summary.scalar('gen_total_loss', gen_total_loss, step=epoch)
         tf.summary.scalar('gen_gan_loss', gen_gan_loss, step=epoch)
@@ -287,8 +293,7 @@ def fit(train_ds, epochs, test_ds):
     for epoch in range(epochs):
 
         for n, (input, target) in tqdm(train_ds.enumerate()):
-            train_step(input, target, epoch)
-            print('epoch:{},step:{}'.format(epoch, n))
+            train_step(input, target, epoch, n)
         for example_input, example_target in test_ds.take(1):
             generate_images(generator, example_input, example_target)
         print("Epoch: ", epoch)
