@@ -76,7 +76,8 @@ def Generator():
 
 
 generator = Generator()
-# keras.utils.plot_model(generator, show_shapes=True) 会报错
+# import keras
+# keras.utils.plot_model(generator, show_shapes=True) #会报错
 
 LAMBDA = 100
 loss_object = tf.keras.losses.BinaryCrossentropy(from_logits=True)
@@ -123,18 +124,20 @@ def discriminator_loss(disc_real_output, disc_generated_output):
 generator_optimizer = tf.keras.optimizers.Adam(2e-4, beta_1=0.5)
 discriminator_optimizer = tf.keras.optimizers.Adam(2e-4, beta_1=0.5)
 
-def generate_images(model, test_input, tar):
-    prediction=model(test_input,training=True)
-    plt.figure(figsize=(15,15))
 
-    display_list=[test_input[0],tar[0],prediction[0]]
-    title=['Input Image','Ground Truth','Predicted Image']
+def generate_images(model, test_input, tar):
+    prediction = model(test_input, training=True)
+    plt.figure(figsize=(15, 15))
+
+    display_list = [test_input[0], tar[0], prediction[0]]
+    title = ['Input Image', 'Ground Truth', 'Predicted Image']
     for i in range(3):
-        plt.subplot(1,3,i+1)
+        plt.subplot(1, 3, i + 1)
         plt.title(title[i])
-        plt.imshow(display_list[i]*0.5+0.5)
+        plt.imshow(display_list[i] * 0.5 + 0.5)
         plt.axis('off')
     plt.show()
+
 
 import datetime
 
@@ -181,3 +184,6 @@ def fit(train_ds, epochs, test_ds):
             checkpoint.save(file_prefix=checkpoint_prefix)
 
     checkpoint.save(file_prefix=checkpoint_prefix)
+
+
+EPOCHS = 150
