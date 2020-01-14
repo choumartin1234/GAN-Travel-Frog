@@ -2,7 +2,7 @@ import os
 import os.path
 import glob
 import shutil
-# import tqdm
+from tqdm import tqdm
 
 # run under the top level directory
 
@@ -17,7 +17,7 @@ pixpaths  = glob.glob('./real/pix/*.jpg')
 train_sz, test_sz = spliter(len(realpaths))
 
 
-for i, realpath in enumerate(realpaths):
+for i, realpath in tqdm(enumerate(realpaths)):
     filename = os.path.filename(path)
 
     pixpath = pixpaths[i]
