@@ -11,8 +11,8 @@ def spliter(sz):
     test_sz = sz - train_sz
     return train_sz, test_sz
 
-realpaths = glob.glob('./real/real/*.jpg')
-pixpaths  = glob.glob('./real/pix/*.jpg')
+realpaths = glob.glob('real/real/*.jpg')
+pixpaths  = glob.glob('real/pix/*.jpg')
 
 train_sz, test_sz = spliter(len(realpaths))
 
