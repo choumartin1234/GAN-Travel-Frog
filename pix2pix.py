@@ -1,6 +1,7 @@
 import tensorflow as tf
 import os
 import time
+import glob
 import argparse
 import datetime
 # import keras
@@ -66,6 +67,19 @@ train_dataset = train_dataset.batch(BATCH_SIZE)
 test_dataset = tf.data.Dataset.list_files(testlist)
 test_dataset = test_dataset.map(load_image_test)
 test_dataset = test_dataset.batch(BATCH_SIZE)
+
+def resize(input_image, real_image, height, width):
+    input_image = tf.image.resize(input_image, [height, width],
+                                method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
+    real_image = tf.image.resize(real_image, [height, width],
+                                method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
+    return input_image, real_image
+
+def random_crop(input_image, real_image):
+    stacked_image = tf.stack([input_image, real_image], axis=0)
+    cropped_image = tf.image.random_crop(stacked_image, size=[2, IMG_HEIGHT, IMG_WIDTH, 3])
+    return cropped_image[0], cropped_image[1]
+
 # normalizing the images to [-1, 1]
 def normalize(input_image, real_image):
     input_image = (input_image / 127.5) - 1
