@@ -69,13 +69,13 @@ testpaths = glob.glob('./test/real/*.jpg')
 for path in testpaths:
     testlist.append(os.path.basename(path))
 
-train_dataset = tf.data.Dataset.list_files(trainlist)
+train_dataset = tf.data.Dataset(trainlist)
 train_dataset = train_dataset.map(load_image_train,
                                   num_parallel_calls=tf.data.experimental.AUTOTUNE)
 train_dataset = train_dataset.shuffle(BUFFER_SIZE)
 train_dataset = train_dataset.batch(BATCH_SIZE)
 
-test_dataset = tf.data.Dataset.list_files(testlist)
+test_dataset = tf.data.Dataset(testlist)
 test_dataset = test_dataset.map(load_image_test)
 test_dataset = test_dataset.batch(BATCH_SIZE)
 
