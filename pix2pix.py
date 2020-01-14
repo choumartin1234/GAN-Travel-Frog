@@ -292,7 +292,7 @@ def fit(train_ds, epochs, test_ds):
         for example_input, example_target in test_ds.take(1):
             generate_images(generator, example_input, example_target)
         print("Epoch: ", epoch)
-        if (epoch + 1) % 20 == 0:
+        if (epoch + 1) % 1 == 0:
             checkpoint.save(file_prefix=checkpoint_prefix)
 
     checkpoint.save(file_prefix=checkpoint_prefix)
