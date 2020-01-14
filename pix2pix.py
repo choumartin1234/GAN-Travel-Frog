@@ -13,13 +13,24 @@ output_channels = 3
 
 parser = argparse.ArgumentParser(
         description='This is a pix2pix model,Reference:https://www.tensorflow.org/tutorials/generative/pix2pix')
+parser.add_argument('--epoch', help='Training epoch', default=150, type=int)
+parser.add_argument('--glr', help='generate learning rate', default=2e-4, type=float)
+parser.add_argument('--dlr', help='discriminator learning rate', default=2e-4, type=float)
+parser.add_argument('--gbeta',help='beta 1 of generator adam optimizer', default = 0.5,type=float)
+parser.add_argument('--dbeta',help='beta 1 of discriminator adam optimizer', default = 0.5,type=float)
+parser.add_argument('--batch', help='batch size', default=16, type=int)
+parser.add_argument('--buffer', help='buffer size', default=400, type=int)
+parser.add_argument('--w', help='Image width', default=256, type=int)
+parser.add_argument('--h', help='Image height', default=256, type=int)
+parser.add_argument('--load',help='whether load from the latest checkpoint', action = "store_true")
+
 args = parser.parse_args()
 
 
-BUFFER_SIZE = 400
-BATCH_SIZE = 1
-IMG_WIDTH = 256
-IMG_HEIGHT = 256
+BUFFER_SIZE = args.buffer
+BATCH_SIZE = args.batch
+IMG_WIDTH = args.w
+IMG_HEIGHT = args.h
 
 
 #### LOAD DATASET ######
@@ -211,8 +222,8 @@ def discriminator_loss(disc_real_output, disc_generated_output):
     return total_disc_loss
 
 
-generator_optimizer = tf.keras.optimizers.Adam(2e-4, beta_1=0.5)
-discriminator_optimizer = tf.keras.optimizers.Adam(2e-4, beta_1=0.5)
+generator_optimizer = tf.keras.optimizers.Adam(args.glr, beta_1=args.gbeta)
+discriminator_optimizer = tf.keras.optimizers.Adam(args.dlr, beta_1=args.dbeta)
 
 
 def generate_images(model, test_input, tar):
@@ -263,7 +274,8 @@ checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
                                  discriminator_optimizer=discriminator_optimizer,
                                  generator=generator,
                                  discriminator=discriminator)
-
+if args.load:
+    checkpoint.restore(tf.train.latest_checkpoint(checkpoint_directory))
 
 def fit(train_ds, epochs, test_ds):
     for epoch in range(epochs):
@@ -276,5 +288,5 @@ def fit(train_ds, epochs, test_ds):
     checkpoint.save(file_prefix=checkpoint_prefix)
 
 
-EPOCHS = 150
+EPOCHS = args.epoch
 fit(train_dataset,EPOCHS,test_dataset)
