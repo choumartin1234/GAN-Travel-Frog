@@ -7,7 +7,7 @@ import datetime
 # import keras
 import glob
 from matplotlib import pyplot as plt
-
+from tqdm import tqdm
 # build generators
 output_channels = 3
 
@@ -18,7 +18,7 @@ parser.add_argument('--glr', help='generate learning rate', default=2e-4, type=f
 parser.add_argument('--dlr', help='discriminator learning rate', default=2e-4, type=float)
 parser.add_argument('--gbeta', help='beta 1 of generator adam optimizer', default=0.5, type=float)
 parser.add_argument('--dbeta', help='beta 1 of discriminator adam optimizer', default=0.5, type=float)
-parser.add_argument('--batch', help='batch size', default=16, type=int)
+parser.add_argument('--batch', help='batch size', default=128, type=int)
 parser.add_argument('--buffer', help='buffer size', default=400, type=int)
 parser.add_argument('--w', help='Image width', default=256, type=int)
 parser.add_argument('--h', help='Image height', default=256, type=int)
@@ -271,7 +271,7 @@ if args.load:
 def fit(train_ds, epochs, test_ds):
     for epoch in range(epochs):
 
-        for n, (input, target) in train_ds.enumerate():
+        for n, (input, target) in tqdm(train_ds.enumerate()):
             train_step(input, target, epoch)
             print('epoch:{},step:{}'.format(epoch, n))
         for example_input, example_target in test_ds.take(1):
