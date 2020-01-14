@@ -61,8 +61,7 @@ def load_image_test(image_name):
     input_image, real_image = random_jitter(input_image, real_image)
     input_image, real_image = normalize(input_image, real_image)
     return input_image, real_image
-
-
+"""
 trainlist = []
 trainpaths = glob.glob('./train/real/*.jpg')
 for path in trainpaths:
@@ -72,14 +71,14 @@ testlist = []
 testpaths = glob.glob('./test/real/*.jpg')
 for path in testpaths:
     testlist.append(os.path.basename(path))
-
-train_dataset = tf.data.Dataset(trainlist)
+"""
+train_dataset = tf.data.Dataset.list_files('./train/real/*.jpg')
 train_dataset = train_dataset.map(load_image_train,
                                   num_parallel_calls=tf.data.experimental.AUTOTUNE)
 train_dataset = train_dataset.shuffle(BUFFER_SIZE)
 train_dataset = train_dataset.batch(BATCH_SIZE)
 
-test_dataset = tf.data.Dataset(testlist)
+train_dataset = tf.data.Dataset.list_files('./test/real/*.jpg')
 test_dataset = test_dataset.map(load_image_test)
 test_dataset = test_dataset.batch(BATCH_SIZE)
 
