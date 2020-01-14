@@ -46,18 +46,6 @@ def load(image_file):
     real_image = tf.cast(real_image, tf.float32)
     return input_image, real_image
 
-def load_image_train(image_file):
-    input_image, real_image = load(image_file)
-    input_image, real_image = random_jitter(input_image, real_image)
-    input_image, real_image = normalize(input_image, real_image)
-    return input_image, real_image
-
-def load_image_test(image_file):
-    input_image, real_image = load(image_file)
-    input_image, real_image = resize(input_image, real_image,IMG_HEIGHT, IMG_WIDTH)
-    input_image, real_image = normalize(input_image, real_image)
-    return input_image, real_image
-
 
 def resize(input_image, real_image, height, width):
     input_image = tf.image.resize(input_image, [height, width],
@@ -91,6 +79,18 @@ def random_jitter(input_image, real_image):
         # random mirroring
         input_image = tf.image.flip_left_right(input_image)
         real_image = tf.image.flip_left_right(real_image)
+    return input_image, real_image
+
+def load_image_train(image_file):
+    input_image, real_image = load(image_file)
+    input_image, real_image = random_jitter(input_image, real_image)
+    input_image, real_image = normalize(input_image, real_image)
+    return input_image, real_image
+
+def load_image_test(image_file):
+    input_image, real_image = load(image_file)
+    input_image, real_image = resize(input_image, real_image,IMG_HEIGHT, IMG_WIDTH)
+    input_image, real_image = normalize(input_image, real_image)
     return input_image, real_image
 
 
