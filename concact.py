@@ -1,6 +1,8 @@
 import cv2 as cv
 import glob
 import os
+import numpy as np
+from tqdm import tqdm
 
 cnt = 1
 paths = glob.glob('./real/*.jpg')
