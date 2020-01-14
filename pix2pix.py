@@ -66,7 +66,7 @@ def random_jitter(input_image, real_image):
     return input_image, real_image
 
 def downsample(filters, size, apply_batchnorm=True):
-    initializer = tf.random_normal_initializer(0., 0.82)
+    initializer = tf.random_normal_initializer(0., 0.02)
     result = tf.keras.Sequential()
     result.add(tf.keras.layers.Conv2D(filters, size, strides=2, padding='same', kernel_initializer=initializer,
                                       use_bias=False))
