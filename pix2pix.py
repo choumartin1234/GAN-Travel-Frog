@@ -12,26 +12,24 @@ from matplotlib import pyplot as plt
 output_channels = 3
 
 parser = argparse.ArgumentParser(
-        description='This is a pix2pix model,Reference:https://www.tensorflow.org/tutorials/generative/pix2pix')
+    description='This is a pix2pix model,Reference:https://www.tensorflow.org/tutorials/generative/pix2pix')
 parser.add_argument('--epoch', help='Training epoch', default=150, type=int)
 parser.add_argument('--glr', help='generate learning rate', default=2e-4, type=float)
 parser.add_argument('--dlr', help='discriminator learning rate', default=2e-4, type=float)
-parser.add_argument('--gbeta',help='beta 1 of generator adam optimizer', default = 0.5,type=float)
-parser.add_argument('--dbeta',help='beta 1 of discriminator adam optimizer', default = 0.5,type=float)
+parser.add_argument('--gbeta', help='beta 1 of generator adam optimizer', default=0.5, type=float)
+parser.add_argument('--dbeta', help='beta 1 of discriminator adam optimizer', default=0.5, type=float)
 parser.add_argument('--batch', help='batch size', default=16, type=int)
 parser.add_argument('--buffer', help='buffer size', default=400, type=int)
 parser.add_argument('--w', help='Image width', default=256, type=int)
 parser.add_argument('--h', help='Image height', default=256, type=int)
-parser.add_argument('--load',help='whether load from the latest checkpoint', action = "store_true")
+parser.add_argument('--load', help='whether load from the latest checkpoint', action="store_true")
 
 args = parser.parse_args()
-
 
 BUFFER_SIZE = args.buffer
 BATCH_SIZE = args.batch
 IMG_WIDTH = args.w
 IMG_HEIGHT = args.h
-
 
 
 #### LOAD DATASET ######
@@ -46,6 +44,28 @@ def load(image_file):
     real_image = tf.cast(real_image, tf.float32)
     return input_image, real_image
 
+
+
+"""
+trainlist = []
+trainpaths = glob.glob('./train/real/*.jpg')
+for path in trainpaths:
+    trainlist.append(os.path.basename(path))
+
+testlist = []
+testpaths = glob.glob('./test/real/*.jpg')
+for path in testpaths:
+    testlist.append(os.path.basename(path))
+"""
+train_dataset = tf.data.Dataset.list_files('./train/*.jpg')
+train_dataset = train_dataset.map(load_image_train,
+                                  num_parallel_calls=tf.data.experimental.AUTOTUNE)
+train_dataset = train_dataset.shuffle(BUFFER_SIZE)
+train_dataset = train_dataset.batch(BATCH_SIZE)
+
+test_dataset = tf.data.Dataset.list_files('./test/*.jpg')
+test_dataset = test_dataset.map(load_image_test)
+test_dataset = test_dataset.batch(BATCH_SIZE)
 
 def resize(input_image, real_image, height, width):
     input_image = tf.image.resize(input_image, [height, width],
@@ -261,12 +281,16 @@ checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
 if args.load:
     checkpoint.restore(tf.train.latest_checkpoint(checkpoint_dir))
 
+
 def fit(train_ds, epochs, test_ds):
     for epoch in range(epochs):
 
         for n, (input, target) in train_ds.enumerate():
             train_step(input, target, epoch)
             print('epoch:{},step:{}'.format(epoch, n))
+        for example_input, example_target in test_ds.take(1):
+            generate_images(generator, example_input, example_target)
+        print("Epoch: ", epoch)
         if (epoch + 1) % 20 == 0:
             checkpoint.save(file_prefix=checkpoint_prefix)
 
@@ -274,4 +298,4 @@ def fit(train_ds, epochs, test_ds):
 
 
 EPOCHS = args.epoch
-fit(train_dataset,EPOCHS,test_dataset)
+fit(train_dataset, EPOCHS, test_dataset)
