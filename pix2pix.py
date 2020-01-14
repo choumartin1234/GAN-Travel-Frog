@@ -1,12 +1,68 @@
 import tensorflow as tf
 import os
 import time
+import argparse
 # import keras
 from matplotlib import pyplot as plt
 
 # build generators
 output_channels = 3
 
+parser = argparse.ArgumentParser(
+        description='This is a pix2pix model,Reference:https://www.tensorflow.org/tutorials/generative/pix2pix')
+args = parser.parse_args()
+
+
+BUFFER_SIZE = 400
+BATCH_SIZE = 1
+IMG_WIDTH = 256
+IMG_HEIGHT = 256
+
+
+#### LOAD DATASET ######
+def load(pix_path,real_path):
+    input_image = tf.io.read_file(pix_path)
+    input_image = tf.image.decode_jpeg(input_image)
+    real_image = tf.io.read_file(real_path)
+    real_image = tf.image.decode_jpeg(real_image)
+    input_image = tf.cast(input_image, tf.float32)
+    real_image = tf.cast(real_image, tf.float32)
+    return input_image, real_image
+
+def load_image_train(image_name):
+    # './train/real/image_name' and './train/pix,image_name'
+    PATH = os.path.join(os.getcwd(),'train')
+    input_image, real_image = load(os.path.join(PATH,'pix',image_name),os.path.join(PATH,'real',image_name))
+    input_image, real_image = random_jitter(input_image, real_image)
+    input_image, real_image = normalize(input_image, real_image)
+    return input_image, real_image
+
+def load_image_test(image_name):
+    # './test/real/image_name' and './test/pix,image_name'
+    PATH = os.path.join(os.getcwd(),'test')
+    input_image, real_image = load(os.path.join(PATH,'pix',image_name),os.path.join(PATH,'real',image_name))
+    input_image, real_image = random_jitter(input_image, real_image)
+    input_image, real_image = normalize(input_image, real_image)
+    return input_image, real_image
+
+# normalizing the images to [-1, 1]
+def normalize(input_image, real_image):
+    input_image = (input_image / 127.5) - 1
+    real_image = (real_image / 127.5) - 1
+    return input_image, real_image
+
+#data augmentation
+@tf.function()
+def random_jitter(input_image, real_image):
+    # resizing to 286 x 286 x 3
+    input_image, real_image = resize(input_image, real_image, 286, 286)
+    # randomly cropping to 256 x 256 x 3
+    input_image, real_image = random_crop(input_image, real_image)
+    if tf.random.uniform(()) > 0.5:
+        # random mirroring
+        input_image = tf.image.flip_left_right(input_image)
+        real_image = tf.image.flip_left_right(real_image)
+    return input_image, real_image
 
 def downsample(filters, size, apply_batchnorm=True):
     initializer = tf.random_normal_initializer(0., 0.82)
