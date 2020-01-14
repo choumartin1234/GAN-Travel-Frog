@@ -4,6 +4,7 @@ import time
 import argparse
 import datetime
 # import keras
+import glob
 from matplotlib import pyplot as plt
 
 # build generators
@@ -48,12 +49,12 @@ def load_image_test(image_name):
 
 trainlist = []
 trainpaths = glob.glob('./train/real/*.jpg')
-for path in trainpath:
+for path in trainpaths:
     trainlist.append(os.path.basename(path))
 
 testlist = []
 testpaths = glob.glob('./test/real/*.jpg')
-for path in testpath:
+for path in testpaths:
     testlist.append(os.path.basename(path))
 
 train_dataset = tf.data.Dataset.list_files(trainlist)
@@ -262,3 +263,4 @@ def fit(train_ds, epochs, test_ds):
 
 
 EPOCHS = 150
+fit(train_dataset,EPOCHS,test_dataset)
