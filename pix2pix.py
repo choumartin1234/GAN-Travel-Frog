@@ -44,29 +44,6 @@ def load(image_file):
     real_image = tf.cast(real_image, tf.float32)
     return input_image, real_image
 
-
-
-"""
-trainlist = []
-trainpaths = glob.glob('./train/real/*.jpg')
-for path in trainpaths:
-    trainlist.append(os.path.basename(path))
-
-testlist = []
-testpaths = glob.glob('./test/real/*.jpg')
-for path in testpaths:
-    testlist.append(os.path.basename(path))
-"""
-train_dataset = tf.data.Dataset.list_files('./train/*.jpg')
-train_dataset = train_dataset.map(load_image_train,
-                                  num_parallel_calls=tf.data.experimental.AUTOTUNE)
-train_dataset = train_dataset.shuffle(BUFFER_SIZE)
-train_dataset = train_dataset.batch(BATCH_SIZE)
-
-test_dataset = tf.data.Dataset.list_files('./test/*.jpg')
-test_dataset = test_dataset.map(load_image_test)
-test_dataset = test_dataset.batch(BATCH_SIZE)
-
 def resize(input_image, real_image, height, width):
     input_image = tf.image.resize(input_image, [height, width],
                                   method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
@@ -113,6 +90,15 @@ def load_image_test(image_file):
     input_image, real_image = normalize(input_image, real_image)
     return input_image, real_image
 
+train_dataset = tf.data.Dataset.list_files('./train/*.jpg')
+train_dataset = train_dataset.map(load_image_train,
+                                  num_parallel_calls=tf.data.experimental.AUTOTUNE)
+train_dataset = train_dataset.shuffle(BUFFER_SIZE)
+train_dataset = train_dataset.batch(BATCH_SIZE)
+
+test_dataset = tf.data.Dataset.list_files('./test/*.jpg')
+test_dataset = test_dataset.map(load_image_test)
+test_dataset = test_dataset.batch(BATCH_SIZE)
 
 def downsample(filters, size, apply_batchnorm=True):
     initializer = tf.random_normal_initializer(0., 0.02)
