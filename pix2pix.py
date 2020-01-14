@@ -6,8 +6,13 @@ import argparse
 import datetime
 # import keras
 import glob
+import matplotlib as mpl
+
+mpl.use('Agg')
 from matplotlib import pyplot as plt
+
 from tqdm import tqdm
+
 # build generators
 output_channels = 3
 
@@ -38,11 +43,12 @@ def load(image_file):
     image = tf.image.decode_jpeg(image)
     w = tf.shape(image)[1]
     w = w // 2
-    real_image = image[:, :w, :] 
+    real_image = image[:, :w, :]
     input_image = image[:, w:, :]
     input_image = tf.cast(input_image, tf.float32)
     real_image = tf.cast(real_image, tf.float32)
     return input_image, real_image
+
 
 def resize(input_image, real_image, height, width):
     input_image = tf.image.resize(input_image, [height, width],
@@ -78,17 +84,20 @@ def random_jitter(input_image, real_image):
         real_image = tf.image.flip_left_right(real_image)
     return input_image, real_image
 
+
 def load_image_train(image_file):
     input_image, real_image = load(image_file)
     input_image, real_image = random_jitter(input_image, real_image)
     input_image, real_image = normalize(input_image, real_image)
     return input_image, real_image
 
+
 def load_image_test(image_file):
     input_image, real_image = load(image_file)
-    input_image, real_image = resize(input_image, real_image,IMG_HEIGHT, IMG_WIDTH)
+    input_image, real_image = resize(input_image, real_image, IMG_HEIGHT, IMG_WIDTH)
     input_image, real_image = normalize(input_image, real_image)
     return input_image, real_image
+
 
 train_dataset = tf.data.Dataset.list_files('./train/*.jpg')
 train_dataset = train_dataset.map(load_image_train,
@@ -99,6 +108,7 @@ train_dataset = train_dataset.batch(BATCH_SIZE)
 test_dataset = tf.data.Dataset.list_files('./test/*.jpg')
 test_dataset = test_dataset.map(load_image_test)
 test_dataset = test_dataset.batch(BATCH_SIZE)
+
 
 def downsample(filters, size, apply_batchnorm=True):
     initializer = tf.random_normal_initializer(0., 0.02)
@@ -215,8 +225,11 @@ def discriminator_loss(disc_real_output, disc_generated_output):
 generator_optimizer = tf.keras.optimizers.Adam(args.glr, beta_1=args.gbeta)
 discriminator_optimizer = tf.keras.optimizers.Adam(args.dlr, beta_1=args.dbeta)
 
+cnt = 0
+
 
 def generate_images(model, test_input, tar):
+    global cnt
     prediction = model(test_input, training=True)
     plt.figure(figsize=(15, 15))
 
@@ -227,7 +240,9 @@ def generate_images(model, test_input, tar):
         plt.title(title[i])
         plt.imshow(display_list[i] * 0.5 + 0.5)
         plt.axis('off')
-    plt.show()
+    # plt.show()
+    cnt += 1
+    plt.savefig('pictures/test_{}.jpg'.format(cnt))
 
 
 import datetime
