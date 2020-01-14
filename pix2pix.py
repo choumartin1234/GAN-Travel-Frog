@@ -33,32 +33,29 @@ IMG_HEIGHT = args.h
 
 
 #### LOAD DATASET ######
-def load(pix_path, real_path):
-    input_image = tf.io.read_file(pix_path)
-    input_image = tf.image.decode_jpeg(input_image)
-    real_image = tf.io.read_file(real_path)
-    real_image = tf.image.decode_jpeg(real_image)
+def load(image_file):
+    image = tf.io.read_file(image_file)
+    image = tf.image.decode_jpeg(image)
+    w = tf.shape(image)[1]
+    w = w // 2
+    real_image = image[:, :w, :] 
+    input_image = image[:, w:, :]
     input_image = tf.cast(input_image, tf.float32)
     real_image = tf.cast(real_image, tf.float32)
     return input_image, real_image
 
-
-def load_image_train(image_name):
-    # './train/real/image_name' and './train/pix/image_name'
-    PATH = os.path.join(os.getcwd(), 'train')
-    input_image, real_image = load(os.path.join(PATH, 'pix', image_name), os.path.join(PATH, 'real', image_name))
+def load_image_train(image_file):
+    input_image, real_image = load(image_file)
     input_image, real_image = random_jitter(input_image, real_image)
     input_image, real_image = normalize(input_image, real_image)
     return input_image, real_image
 
-
-def load_image_test(image_name):
-    # './test/real/image_name' and './test/pix/image_name'
-    PATH = os.path.join(os.getcwd(), 'test')
-    input_image, real_image = load(os.path.join(PATH, 'pix', image_name), os.path.join(PATH, 'real', image_name))
-    input_image, real_image = random_jitter(input_image, real_image)
+def load_image_test(image_file):
+    input_image, real_image = load(image_file)
+    input_image, real_image = resize(input_image, real_image,IMG_HEIGHT, IMG_WIDTH)
     input_image, real_image = normalize(input_image, real_image)
     return input_image, real_image
+
 
 
 """
@@ -81,7 +78,6 @@ train_dataset = train_dataset.batch(BATCH_SIZE)
 test_dataset = tf.data.Dataset.list_files('./test/real/*.jpg')
 test_dataset = test_dataset.map(load_image_test)
 test_dataset = test_dataset.batch(BATCH_SIZE)
-
 
 def resize(input_image, real_image, height, width):
     input_image = tf.image.resize(input_image, [height, width],
