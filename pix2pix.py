@@ -78,7 +78,7 @@ train_dataset = train_dataset.map(load_image_train,
 train_dataset = train_dataset.shuffle(BUFFER_SIZE)
 train_dataset = train_dataset.batch(BATCH_SIZE)
 
-train_dataset = tf.data.Dataset.list_files('./test/real/*.jpg')
+dataset = tf.data.Dataset.list_files('./test/real/*.jpg')
 test_dataset = test_dataset.map(load_image_test)
 test_dataset = test_dataset.batch(BATCH_SIZE)
 
