@@ -283,7 +283,7 @@ checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
                                  generator=generator,
                                  discriminator=discriminator)
 if args.load:
-    checkpoint.restore(tf.train.latest_checkpoint(checkpoint_directory))
+    checkpoint.restore(tf.train.latest_checkpoint(checkpoint_dir))
 
 def fit(train_ds, epochs, test_ds):
     for epoch in range(epochs):
