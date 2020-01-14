@@ -1,6 +1,7 @@
 import tensorflow as tf
 import os
 import time
+import datetime
 # import keras
 from matplotlib import pyplot as plt
 
@@ -122,6 +123,25 @@ def discriminator_loss(disc_real_output, disc_generated_output):
 generator_optimizer = tf.keras.optimizers.Adam(2e-4, beta_1=0.5)
 discriminator_optimizer = tf.keras.optimizers.Adam(2e-4, beta_1=0.5)
 
+def generate_images(model, test_input, tar):
+    prediction=model(test_input,training=True)
+    plt.figure(figsize=(15,15))
+
+    display_list=[test_input[0],tar[0],prediction[0]]
+    title=['Input Image','Ground Truth','Predicted Image']
+    for i in range(3):
+        plt.subplot(1,3,i+1)
+        plt.title(title[i])
+        plt.imshow(display_list[i]*0.5+0.5)
+        plt.axis('off')
+    plt.show()
+
+import datetime
+
+log_dir = 'logs/'
+
+summary_writer = tf.summary.FileWriter(log_dir + "fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
+
 
 @tf.function
 def train_step(input_image, target, epoch):
@@ -137,6 +157,11 @@ def train_step(input_image, target, epoch):
     discriminator_gradients = disc_tape.gradient(disc_loss, discriminator.trainable_variables)
     generator_optimizer.apply_gradients(zip(generator_gradients, generator.trainable_variables))
     discriminator_optimizer.apply_gradients(zip(discriminator_gradients, discriminator.trainable_variables))
+    with summary_writer.as_default():
+        tf.summary.scalar('gen_total_loss', gen_total_loss, step=epoch)
+        tf.summary.scalar('gen_gan_loss', gen_gan_loss, step=epoch)
+        tf.summary.scalar('gen_l1_loss', gen_l1_loss, step=epoch)
+        tf.summary.scalar('disc_loss', disc_loss, step=epoch)
 
 
 checkpoint_dir = './training_checkpoints'
