@@ -33,8 +33,9 @@ IMG_WIDTH = args.w
 IMG_HEIGHT = args.h
 
 
+
 #### LOAD DATASET ######
-def load(pix_path,real_path):
+def load(pix_path, real_path):
     input_image = tf.io.read_file(pix_path)
     input_image = tf.image.decode_jpeg(input_image)
     real_image = tf.io.read_file(real_path)
@@ -43,21 +44,24 @@ def load(pix_path,real_path):
     real_image = tf.cast(real_image, tf.float32)
     return input_image, real_image
 
+
 def load_image_train(image_name):
     # './train/real/image_name' and './train/pix/image_name'
-    PATH = os.path.join(os.getcwd(),'train')
-    input_image, real_image = load(os.path.join(PATH,'pix',image_name),os.path.join(PATH,'real',image_name))
+    PATH = os.path.join(os.getcwd(), 'train')
+    input_image, real_image = load(os.path.join(PATH, 'pix', image_name), os.path.join(PATH, 'real', image_name))
     input_image, real_image = random_jitter(input_image, real_image)
     input_image, real_image = normalize(input_image, real_image)
     return input_image, real_image
 
+
 def load_image_test(image_name):
     # './test/real/image_name' and './test/pix/image_name'
-    PATH = os.path.join(os.getcwd(),'test')
-    input_image, real_image = load(os.path.join(PATH,'pix',image_name),os.path.join(PATH,'real',image_name))
+    PATH = os.path.join(os.getcwd(), 'test')
+    input_image, real_image = load(os.path.join(PATH, 'pix', image_name), os.path.join(PATH, 'real', image_name))
     input_image, real_image = random_jitter(input_image, real_image)
     input_image, real_image = normalize(input_image, real_image)
     return input_image, real_image
+
 
 trainlist = []
 trainpaths = glob.glob('./train/real/*.jpg')
@@ -79,17 +83,20 @@ test_dataset = tf.data.Dataset(testlist)
 test_dataset = test_dataset.map(load_image_test)
 test_dataset = test_dataset.batch(BATCH_SIZE)
 
+
 def resize(input_image, real_image, height, width):
     input_image = tf.image.resize(input_image, [height, width],
-                                method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
+                                  method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
     real_image = tf.image.resize(real_image, [height, width],
-                                method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
+                                 method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
     return input_image, real_image
+
 
 def random_crop(input_image, real_image):
     stacked_image = tf.stack([input_image, real_image], axis=0)
     cropped_image = tf.image.random_crop(stacked_image, size=[2, IMG_HEIGHT, IMG_WIDTH, 3])
     return cropped_image[0], cropped_image[1]
+
 
 # normalizing the images to [-1, 1]
 def normalize(input_image, real_image):
@@ -97,7 +104,8 @@ def normalize(input_image, real_image):
     real_image = (real_image / 127.5) - 1
     return input_image, real_image
 
-#data augmentation
+
+# data augmentation
 @tf.function()
 def random_jitter(input_image, real_image):
     # resizing to 286 x 286 x 3
@@ -109,6 +117,7 @@ def random_jitter(input_image, real_image):
         input_image = tf.image.flip_left_right(input_image)
         real_image = tf.image.flip_left_right(real_image)
     return input_image, real_image
+
 
 def downsample(filters, size, apply_batchnorm=True):
     initializer = tf.random_normal_initializer(0., 0.02)
@@ -282,6 +291,7 @@ def fit(train_ds, epochs, test_ds):
 
         for n, (input, target) in train_ds.enumerate():
             train_step(input, target, epoch)
+            print('epoch:{},step:{}'.format(epoch, n))
         if (epoch + 1) % 20 == 0:
             checkpoint.save(file_prefix=checkpoint_prefix)
 
