@@ -31,7 +31,7 @@ def load(pix_path,real_path):
     return input_image, real_image
 
 def load_image_train(image_name):
-    # './train/real/image_name' and './train/pix,image_name'
+    # './train/real/image_name' and './train/pix/image_name'
     PATH = os.path.join(os.getcwd(),'train')
     input_image, real_image = load(os.path.join(PATH,'pix',image_name),os.path.join(PATH,'real',image_name))
     input_image, real_image = random_jitter(input_image, real_image)
@@ -39,13 +39,32 @@ def load_image_train(image_name):
     return input_image, real_image
 
 def load_image_test(image_name):
-    # './test/real/image_name' and './test/pix,image_name'
+    # './test/real/image_name' and './test/pix/image_name'
     PATH = os.path.join(os.getcwd(),'test')
     input_image, real_image = load(os.path.join(PATH,'pix',image_name),os.path.join(PATH,'real',image_name))
     input_image, real_image = random_jitter(input_image, real_image)
     input_image, real_image = normalize(input_image, real_image)
     return input_image, real_image
 
+trainlist = []
+trainpaths = glob.glob('./train/real/*.jpg')
+for path in trainpath:
+    trainlist.append(os.path.basename(path))
+
+testlist = []
+testpaths = glob.glob('./test/real/*.jpg')
+for path in testpath:
+    testlist.append(os.path.basename(path))
+
+train_dataset = tf.data.Dataset.list_files(trainlist)
+train_dataset = train_dataset.map(load_image_train,
+                                  num_parallel_calls=tf.data.experimental.AUTOTUNE)
+train_dataset = train_dataset.shuffle(BUFFER_SIZE)
+train_dataset = train_dataset.batch(BATCH_SIZE)
+
+test_dataset = tf.data.Dataset.list_files(testlist)
+test_dataset = test_dataset.map(load_image_test)
+test_dataset = test_dataset.batch(BATCH_SIZE)
 # normalizing the images to [-1, 1]
 def normalize(input_image, real_image):
     input_image = (input_image / 127.5) - 1
