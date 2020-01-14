@@ -61,27 +61,8 @@ def load_image_test(image_name):
     input_image, real_image = random_jitter(input_image, real_image)
     input_image, real_image = normalize(input_image, real_image)
     return input_image, real_image
-"""
-trainlist = []
-trainpaths = glob.glob('./train/real/*.jpg')
-for path in trainpaths:
-    trainlist.append(os.path.basename(path))
 
-testlist = []
-testpaths = glob.glob('./test/real/*.jpg')
-for path in testpaths:
-    testlist.append(os.path.basename(path))
-"""
-train_dataset = tf.data.Dataset.list_files('./train/real/*.jpg')
-train_dataset = train_dataset.map(load_image_train,
-                                  num_parallel_calls=tf.data.experimental.AUTOTUNE)
-train_dataset = train_dataset.shuffle(BUFFER_SIZE)
-train_dataset = train_dataset.batch(BATCH_SIZE)
-
-dataset = tf.data.Dataset.list_files('./test/real/*.jpg')
-test_dataset = test_dataset.map(load_image_test)
-test_dataset = test_dataset.batch(BATCH_SIZE)
-
+    
 
 def resize(input_image, real_image, height, width):
     input_image = tf.image.resize(input_image, [height, width],
@@ -283,7 +264,7 @@ checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
                                  generator=generator,
                                  discriminator=discriminator)
 if args.load:
-    checkpoint.restore(tf.train.latest_checkpoint(checkpoint_directory))
+    checkpoint.restore(tf.train.latest_checkpoint(checkpoint_dir))
 
 def fit(train_ds, epochs, test_ds):
     for epoch in range(epochs):
