@@ -18,7 +18,7 @@ train_sz, test_sz = spliter(len(realpaths))
 
 
 for i, realpath in tqdm(enumerate(realpaths)):
-    filename = os.path.filename(path)
+    filename = os.path.basename(realpath)
 
     pixpath = pixpaths[i]
 
