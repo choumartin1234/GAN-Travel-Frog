@@ -266,11 +266,14 @@ def train_step(input_image, target, epoch, step):
     discriminator_gradients = disc_tape.gradient(disc_loss, discriminator.trainable_variables)
     generator_optimizer.apply_gradients(zip(generator_gradients, generator.trainable_variables))
     discriminator_optimizer.apply_gradients(zip(discriminator_gradients, discriminator.trainable_variables))
+    print('epoch:{},step:{}'.format(epoch,step))
+    """
     print('epoch:{},step:{},gen_total_loss:{},gen_gan_loss:{},gen_l1_loss:{},disc_loss:{}'.format(epoch, step,
                                                                                                   gen_total_loss,
                                                                                                   gen_gan_loss,
                                                                                                   gen_l1_loss,
                                                                                                   disc_loss))
+    """
 
     with summary_writer.as_default():
         tf.summary.scalar('gen_total_loss', gen_total_loss, step=epoch)
