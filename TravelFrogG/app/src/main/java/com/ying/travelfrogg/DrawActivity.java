@@ -3,6 +3,7 @@ package com.ying.travelfrogg;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -15,9 +16,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.io.File;
-//import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
 public class DrawActivity extends AppCompatActivity {
 
@@ -49,6 +48,15 @@ public class DrawActivity extends AppCompatActivity {
 
                 requestPermissions(permissions, PERMISSION_REQUEST_CODE);
             }
+
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_DENIED) {
+
+                Log.d("permission", "permission denied to READ_EXTERNAL_STORAGE - requesting it");
+                String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
+
+                requestPermissions(permissions, PERMISSION_REQUEST_CODE);
+            }
         }
 
         View drawView = findViewById(R.id.drawingView);
@@ -58,19 +66,28 @@ public class DrawActivity extends AppCompatActivity {
         Bitmap bitmap = viewToBitmap(drawView);
 
         try {
-            // TODO: save bitmap to app specific space
+//            String path = Environment.getExternalStorageDirectory().toString();
+//
+//            File file = new File(path, "sample.png");
+//            FileOutputStream outputStream = new FileOutputStream(file);
+//            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+//            Log.d("SAVE", "file is compressed, size is " + bitmap.getByteCount());
+//            outputStream.close();
 
-            String path = Environment.getExternalStorageDirectory().toString();
+            // Write file
+            String filename = "sample.png";
+            FileOutputStream stream = this.openFileOutput(filename, Context.MODE_PRIVATE);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
 
-            File file = new File(path, "sample.png");
-            FileOutputStream outputStream = new FileOutputStream(file);
-//            System.out.println(outputStream);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-            Log.d("SAVE", "file is compressed, size is " + bitmap.getByteCount());
-            outputStream.close();
+            // Finish write
+            stream.close();
+            bitmap.recycle();
 
-//            MediaStore.Images.Media.insertImage(getContentResolver(),
-//                    file.getAbsolutePath(), file.getName(), file.getName());
+            // Go to generation activity
+            Intent intent = new Intent(this, GenerateActivity.class);
+            intent.putExtra("image", filename);
+            startActivity(intent);
+
         } catch(Exception e) {
             e.printStackTrace();
         }
