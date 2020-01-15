@@ -74,6 +74,7 @@ public class DrawActivity extends AppCompatActivity {
 //            Log.d("SAVE", "file is compressed, size is " + bitmap.getByteCount());
 //            outputStream.close();
 
+            // ===========================================================================
             // Write file
             String filename = "sample.png";
             FileOutputStream stream = this.openFileOutput(filename, Context.MODE_PRIVATE);

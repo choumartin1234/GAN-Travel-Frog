@@ -144,25 +144,41 @@ public abstract class Generator {
         // load input bitmap
         inputImageBuffer = loadImage(drawing);
 
-
         // apply generator model for inference
         Trace.beginSection("runInference");
         long startTimeForReference = SystemClock.uptimeMillis();
-
-//        Log.d("BUFFER", "input buffer " + inputImageBuffer.getDataType());
-//        Log.d("BUFFER", "output buffer " + outputBuffer.getShape());
         tflite.run(inputImageBuffer.getBuffer(), outputBuffer.getBuffer());
 
-        byte[] bitmapData = outputBuffer.getBuffer().array();
+        byte[] arr = outputBuffer.getBuffer().array();
+        for (int i = 0; i < 10; i++) {
+            System.out.print(arr[i] + " ");
+        }
+        System.out.println(" ");
 
         long endTimeForReference = SystemClock.uptimeMillis();
         Trace.endSection();
-        Log.d("PIX2PIX", "spent " + (endTimeForReference - startTimeForReference));
+        Log.d("PIX2PIX", "spent " + (endTimeForReference - startTimeForReference) + "ms");
 
         // return generated bitmap
-//        Bitmap generated  = outputImageBuffer.getBitmap();
-        Bitmap generated = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
-        Log.d("BITMAP", "bitmap data size" + bitmapData.length);
+        Bitmap generated;
+        int[] shape = outputBuffer.getShape();
+        int h = shape[0];
+        int w = shape[1];
+        generated = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+
+        // TODO: Find a way to avoid creating multiple intermediate buffers every time.
+        int[] intValues = new int[w * h];
+        int[] rgbValues = outputBuffer.getIntArray();
+        for (int i = 0, j = 0; i < intValues.length; i++) {
+            byte r = (byte) rgbValues[j++];
+            byte g = (byte) rgbValues[j++];
+            byte b = (byte) rgbValues[j++];
+            intValues[i] = ((r << 16) | (g << 8) | b);
+//            if (i % 50 == 0) System.out.println(i + " " + intValues[i]);
+        }
+        Log.d("BITMAP", "finish generating");
+        generated.setPixels(intValues, 0, w, 0, 0, w, h);
+
         return generated;
     }
 }
