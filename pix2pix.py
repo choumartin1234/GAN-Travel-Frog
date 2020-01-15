@@ -307,4 +307,9 @@ def fit(train_ds, epochs, test_ds):
 
 
 EPOCHS = args.epoch
-fit(train_dataset, EPOCHS, test_dataset)
+def main():
+    fit(train_dataset, EPOCHS, test_dataset)
+
+
+if __name__=='__main__':
+    main()
