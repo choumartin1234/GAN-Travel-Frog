@@ -77,7 +77,7 @@ public class GenerateActivity extends AppCompatActivity {
             }
 
 
-//            genImageView.setImageBitmap(outputImage);
+            genImageView.setImageBitmap(outputImage);
         }
     }
 }

@@ -19,6 +19,7 @@ import org.tensorflow.lite.support.image.ops.ResizeWithCropOrPadOp;
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 
 public abstract class Generator {
@@ -149,9 +150,10 @@ public abstract class Generator {
         long startTimeForReference = SystemClock.uptimeMillis();
         tflite.run(inputImageBuffer.getBuffer(), outputBuffer.getBuffer());
 
-        byte[] arr = outputBuffer.getBuffer().array();
-        for (int i = 0; i < 10; i++) {
-            System.out.print(arr[i] + " ");
+        byte[] byteArray = outputBuffer.getBuffer().array();
+
+        for (int i = 0; i < 20; i++) {
+            System.out.print(byteArray[i] + " ");
         }
         System.out.println(" ");
 
@@ -162,20 +164,27 @@ public abstract class Generator {
         // return generated bitmap
         Bitmap generated;
         int[] shape = outputBuffer.getShape();
-        int h = shape[0];
-        int w = shape[1];
+        int h = shape[1];
+        int w = shape[2];
         generated = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
 
-        // TODO: Find a way to avoid creating multiple intermediate buffers every time.
+        // TODO: Fix noise
         int[] intValues = new int[w * h];
-        int[] rgbValues = outputBuffer.getIntArray();
+
+
         for (int i = 0, j = 0; i < intValues.length; i++) {
-            byte r = (byte) rgbValues[j++];
-            byte g = (byte) rgbValues[j++];
-            byte b = (byte) rgbValues[j++];
-            intValues[i] = ((r << 16) | (g << 8) | b);
-//            if (i % 50 == 0) System.out.println(i + " " + intValues[i]);
+            int r = byteArray[j] & 0xff; j++;
+            int g = byteArray[j] & 0xff; j++;
+            int b = byteArray[j] & 0xff; j++;
+
+            intValues[i] = 0xff000000 | ((r << 16) | (g << 8) | b);
+
+//            if (i % 50 == 0) {
+//                System.out.println("byte: " + r + " " + g + " " + b);
+//                System.out.println("intValue: " + intValues[i]);
+//            }
         }
+
         Log.d("BITMAP", "finish generating");
         generated.setPixels(intValues, 0, w, 0, 0, w, h);
 
