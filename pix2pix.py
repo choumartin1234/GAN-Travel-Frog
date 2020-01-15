@@ -303,7 +303,7 @@ def fit(train_ds, epochs, test_ds):
         if (epoch + 1) % 1 == 0:
             checkpoint.save(file_prefix=checkpoint_prefix)
 
-    checkpoint.save(file_prefix=checkpoint_prefix)
+    #checkpoint.save(file_prefix=checkpoint_prefix)
 
 
 EPOCHS = args.epoch
