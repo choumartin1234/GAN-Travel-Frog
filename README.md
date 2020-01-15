@@ -19,7 +19,7 @@
 
 #### Our Model 
 
-![](pic/Model.png)
+![](pic/Model.PNG)
 
 
 
