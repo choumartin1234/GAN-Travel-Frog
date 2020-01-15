@@ -1,6 +1,7 @@
 package com.ying.travelfrogg.tflite;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 
 import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.Interpreter;
@@ -106,5 +107,23 @@ public abstract class Generator {
         DataType outputDataType = tflite.getOutputTensor(outputTensorIndex).dataType();
         outputImageBuffer = new TensorImage(outputDataType);
 
+    }
+
+    /** Loads input image. */
+    private void loadImage(final Bitmap bitmap) {
+        // Loads bitmap into a TensorImage.
+        inputImageBuffer.load(bitmap);
+
+        // TODO: possibly apply some preprocessing
+    }
+
+    public Bitmap generateImage(Bitmap drawing) {
+        // load input bitmap
+        loadImage(drawing);
+
+        // TODO: apply generator model
+
+        Bitmap generated  = outputImageBuffer.getBitmap();
+        return generated;
     }
 }

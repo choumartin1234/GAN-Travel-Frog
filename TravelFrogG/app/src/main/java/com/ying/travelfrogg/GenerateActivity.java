@@ -11,7 +11,7 @@ public class GenerateActivity extends AppCompatActivity {
 
     private Model model = Model.QUANTIZED;     // default as QUANTIZED
     private Device device = Device.CPU;        // default as CPU
-    private int numThreads = -1;
+    private int numThreads = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
