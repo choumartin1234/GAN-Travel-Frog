@@ -1,6 +1,10 @@
 package com.ying.travelfrogg.tflite;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.os.SystemClock;
+import android.os.Trace;
+import android.util.Log;
 
 import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.Interpreter;
@@ -106,5 +110,32 @@ public abstract class Generator {
         DataType outputDataType = tflite.getOutputTensor(outputTensorIndex).dataType();
         outputImageBuffer = new TensorImage(outputDataType);
 
+    }
+
+    /** Loads input image. */
+    private void loadImage(final Bitmap bitmap) {
+        // Loads bitmap into a TensorImage.
+        inputImageBuffer.load(bitmap);
+
+        // TODO: possibly apply some preprocessing?
+    }
+
+    public Bitmap generateImage(Bitmap drawing) {
+        // load input bitmap
+        loadImage(drawing);
+
+
+        // apply generator model for inference
+        Trace.beginSection("runInference");
+        long startTimeForReference = SystemClock.uptimeMillis();
+        // TODO: check if rewind is needed
+        tflite.run(inputImageBuffer.getBuffer(), outputImageBuffer.getBuffer().rewind());
+        long endTimeForReference = SystemClock.uptimeMillis();
+        Trace.endSection();
+        Log.d("PIX2PIX", "spent " + (endTimeForReference - startTimeForReference));
+
+        // return generated bitmap
+        Bitmap generated  = outputImageBuffer.getBitmap();
+        return generated;
     }
 }

@@ -303,8 +303,13 @@ def fit(train_ds, epochs, test_ds):
         if (epoch + 1) % 1 == 0:
             checkpoint.save(file_prefix=checkpoint_prefix)
 
-    checkpoint.save(file_prefix=checkpoint_prefix)
+    #checkpoint.save(file_prefix=checkpoint_prefix)
 
 
 EPOCHS = args.epoch
-fit(train_dataset, EPOCHS, test_dataset)
+def main():
+    fit(train_dataset, EPOCHS, test_dataset)
+
+
+if __name__=='__main__':
+    main()
