@@ -43,6 +43,15 @@ public class GenerateActivity extends AppCompatActivity {
             FileInputStream is = this.openFileInput(filename);
             inputImage = BitmapFactory.decodeStream(is);
             is.close();
+
+//            // If test with saved file =======================================
+//            String path = Environment.getExternalStorageDirectory().toString();
+//            File file = new File(path, "4fb8.jpg");
+//            FileInputStream is = new FileInputStream(file);
+//            inputImage = BitmapFactory.decodeStream(is);
+//            is.close();
+
+
             genImageView.setImageBitmap(inputImage);
         } catch (Exception e) {
             e.printStackTrace();
