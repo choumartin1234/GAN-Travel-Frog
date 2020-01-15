@@ -17,13 +17,13 @@
 
     
 
-#### Our Model 
+### Our Model 
 
 ![](pic/Model.PNG)
 
 
 
-#### Process Dataset
+### Process Dataset
 
 + Download some pictures of landmarks/buildings (For example, [Google Landmarks Dataset](https://www.kaggle.com/google/google-landmarks-dataset)). 
 
@@ -44,6 +44,8 @@ After preprocessing the input data. It should be like this structure:
 Every ```*.jpg``` should be a picture of the form of $$2W \times H$$,  with the left part $W\times H$ contains a subpicture of Real Image, and the right part  $W\times H$ contains corresponding sketch Image.
 
 
+
+### Training
 
 #### Training
 
@@ -66,7 +68,7 @@ python pix2pix.py [args]
 
 
 
-#### Testing
+### Testing
 
 After Each epoch of training, we will randomly pick one picture from test dataset and run our model again. The result will be saved into ```pictures/test_[epochNum].png```. An example result is as below :
 
@@ -74,31 +76,31 @@ After Each epoch of training, we will randomly pick one picture from test datase
 
 
 
-#### Save Model to TensorFlow Lite
+### Save Model to TensorFlow Lite
 
 Transform the generator model to TensorFlow Lite and put it into ```app/src/assets``` to run model on the Travel Frog Application. You can also use our pretrained model.
 
 
 
-#### Run Our Application
+### Run the Application
 
-Use ```Android Studio``` to build the app. Have Fun and create wonderlands for your cute Travel Frog !
+Use ```Android Studio``` to build the app. You can also download our apk. Have Fun and create wonderlands for your cute Travel Frog !
 
 
 
-##### Reference
+#### Reference
 
 [[1] Xie, Saining, and Zhuowen Tu. "Holistically-nested edge detection." Proceedings of the IEEE international conference on computer vision. 2015.](http://openaccess.thecvf.com/content_iccv_2015/papers/Xie_Holistically-Nested_Edge_Detection_ICCV_2015_paper.pdf)
 
 [[2] Isola, Phillip, et al. "Image-to-image translation with conditional adversarial networks." Proceedings of the IEEE conference on computer vision and pattern recognition. 2017](https://arxiv.org/pdf/1611.07004.pdf).
 
-[[3] Tensorflow Core Tutorials: Pix2pix](https://www.tensorflow.org/tutorials/generative/pix2pix)[Tensorflow](https://www.tensorflow.org/tutorials/generative/pix2pix)[ ](https://www.tensorflow.org/tutorials/generative/pix2pix)[Core Tutorials](https://www.tensorflow.org/tutorials/generative/pix2pix)
+[[3] Tensorflow Core Tutorials: Pix2pix](https://www.tensorflow.org/tutorials/generative/pix2pix)
 
 [[4] Github Repo: ashukid/hed-edge-detector ](https://github.com/ashukid/hed-edge-detector)
 
 
 
-##### Arthurs
+#### Arthurs
 
 - EnHsien Chou, Tsinghua University, Department of Computer Science and Technology
 - Ying Chen, Tsinghua University, Department of Computer Science and Technology
@@ -106,6 +108,7 @@ Use ```Android Studio``` to build the app. Have Fun and create wonderlands for y
 
 
 
-##### Acknowledgement
+#### Acknowledgement
 
 Special Thanks to **Google Beijing** for holding the ML camp, providing GCP platform and giving technical help.
+
