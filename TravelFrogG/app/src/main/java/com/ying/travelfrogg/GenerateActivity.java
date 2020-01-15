@@ -59,7 +59,7 @@ public class GenerateActivity extends AppCompatActivity {
 
             Bitmap outputImage = generator.generateImage(inputImage);
 
-            Log.d("GEN", "generated bitmap with byte count " + outputImage.getByteCount());
+//            Log.d("GEN", "generated bitmap with byte count " + outputImage.getByteCount());
 
             genImageView.setImageBitmap(outputImage);
         }

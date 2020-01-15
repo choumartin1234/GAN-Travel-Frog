@@ -2,6 +2,7 @@ package com.ying.travelfrogg.tflite;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.SystemClock;
 import android.os.Trace;
 import android.util.Log;
@@ -11,7 +12,11 @@ import org.tensorflow.lite.Interpreter;
 import org.tensorflow.lite.nnapi.NnApiDelegate;
 import org.tensorflow.lite.gpu.GpuDelegate;
 import org.tensorflow.lite.support.common.FileUtil;
+import org.tensorflow.lite.support.image.ImageProcessor;
 import org.tensorflow.lite.support.image.TensorImage;
+import org.tensorflow.lite.support.image.ops.ResizeOp;
+import org.tensorflow.lite.support.image.ops.ResizeWithCropOrPadOp;
+import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
 import java.io.IOException;
 import java.nio.MappedByteBuffer;
@@ -50,6 +55,8 @@ public abstract class Generator {
 
     /** Output image TensorBuffer. */
     private TensorImage outputImageBuffer;
+
+    private TensorBuffer outputBuffer;
 
 
     /** Gets the name of the model file stored in Assets. */
@@ -107,35 +114,55 @@ public abstract class Generator {
 
         /** Set output image buffer */
         int outputTensorIndex = 0;
+
+        int[] outputShape =
+                tflite.getOutputTensor(outputTensorIndex).shape();
+
         DataType outputDataType = tflite.getOutputTensor(outputTensorIndex).dataType();
         outputImageBuffer = new TensorImage(outputDataType);
 
+        outputBuffer = TensorBuffer.createFixedSize(outputShape, outputDataType);
     }
 
     /** Loads input image. */
-    private void loadImage(final Bitmap bitmap) {
+    private TensorImage loadImage(final Bitmap bitmap) {
         // Loads bitmap into a TensorImage.
         inputImageBuffer.load(bitmap);
 
-        // TODO: possibly apply some preprocessing?
+        // Creates processor for the TensorImage.
+        int cropSize = Math.min(bitmap.getWidth(), bitmap.getHeight());
+        ImageProcessor imageProcessor =
+                new ImageProcessor.Builder()
+                        .add(new ResizeWithCropOrPadOp(cropSize, cropSize))
+                        .add(new ResizeOp(imageSizeX, imageSizeY, ResizeOp.ResizeMethod.NEAREST_NEIGHBOR))
+                        .build();
+
+        return imageProcessor.process(inputImageBuffer);
     }
 
     public Bitmap generateImage(Bitmap drawing) {
         // load input bitmap
-        loadImage(drawing);
+        inputImageBuffer = loadImage(drawing);
 
 
         // apply generator model for inference
         Trace.beginSection("runInference");
         long startTimeForReference = SystemClock.uptimeMillis();
-        // TODO: check if rewind is needed
-        tflite.run(inputImageBuffer.getBuffer(), outputImageBuffer.getBuffer());
+
+//        Log.d("BUFFER", "input buffer " + inputImageBuffer.getDataType());
+//        Log.d("BUFFER", "output buffer " + outputBuffer.getShape());
+        tflite.run(inputImageBuffer.getBuffer(), outputBuffer.getBuffer());
+
+        byte[] bitmapData = outputBuffer.getBuffer().array();
+
         long endTimeForReference = SystemClock.uptimeMillis();
         Trace.endSection();
         Log.d("PIX2PIX", "spent " + (endTimeForReference - startTimeForReference));
 
         // return generated bitmap
-        Bitmap generated  = outputImageBuffer.getBitmap();
+//        Bitmap generated  = outputImageBuffer.getBitmap();
+        Bitmap generated = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
+        Log.d("BITMAP", "bitmap data size" + bitmapData.length);
         return generated;
     }
 }
