@@ -129,7 +129,7 @@ public abstract class Generator {
         Trace.beginSection("runInference");
         long startTimeForReference = SystemClock.uptimeMillis();
         // TODO: check if rewind is needed
-        tflite.run(inputImageBuffer.getBuffer(), outputImageBuffer.getBuffer().rewind());
+        tflite.run(inputImageBuffer.getBuffer(), outputImageBuffer.getBuffer());
         long endTimeForReference = SystemClock.uptimeMillis();
         Trace.endSection();
         Log.d("PIX2PIX", "spent " + (endTimeForReference - startTimeForReference));
