@@ -88,13 +88,13 @@ Use ```Android Studio``` to build the app. Have Fun and create wonderlands for y
 
 ##### Reference
 
-[[1\] ](http://openaccess.thecvf.com/content_iccv_2015/papers/Xie_Holistically-Nested_Edge_Detection_ICCV_2015_paper.pdf)[Xie](http://openaccess.thecvf.com/content_iccv_2015/papers/Xie_Holistically-Nested_Edge_Detection_ICCV_2015_paper.pdf)[, ](http://openaccess.thecvf.com/content_iccv_2015/papers/Xie_Holistically-Nested_Edge_Detection_ICCV_2015_paper.pdf)[Saining](http://openaccess.thecvf.com/content_iccv_2015/papers/Xie_Holistically-Nested_Edge_Detection_ICCV_2015_paper.pdf)[, and ](http://openaccess.thecvf.com/content_iccv_2015/papers/Xie_Holistically-Nested_Edge_Detection_ICCV_2015_paper.pdf)[Zhuowen](http://openaccess.thecvf.com/content_iccv_2015/papers/Xie_Holistically-Nested_Edge_Detection_ICCV_2015_paper.pdf)[ Tu. "Holistically-nested edge detection." Proceedings of the IEEE international conference on computer vision. ](http://openaccess.thecvf.com/content_iccv_2015/papers/Xie_Holistically-Nested_Edge_Detection_ICCV_2015_paper.pdf)[2015](http://openaccess.thecvf.com/content_iccv_2015/papers/Xie_Holistically-Nested_Edge_Detection_ICCV_2015_paper.pdf)[.](http://openaccess.thecvf.com/content_iccv_2015/papers/Xie_Holistically-Nested_Edge_Detection_ICCV_2015_paper.pdf)
+[[1] Xie, Saining, and Zhuowen Tu. "Holistically-nested edge detection." Proceedings of the IEEE international conference on computer vision. 2015.](http://openaccess.thecvf.com/content_iccv_2015/papers/Xie_Holistically-Nested_Edge_Detection_ICCV_2015_paper.pdf)
 
-[[2\]](https://arxiv.org/pdf/1611.07004.pdf)[ ](https://arxiv.org/pdf/1611.07004.pdf)[Isola, Phillip, et al. "Image-to-image translation with conditional adversarial networks." Proceedings of the IEEE conference on computer vision and pattern recognition. 2017](https://arxiv.org/pdf/1611.07004.pdf).
+[[2] Isola, Phillip, et al. "Image-to-image translation with conditional adversarial networks." Proceedings of the IEEE conference on computer vision and pattern recognition. 2017](https://arxiv.org/pdf/1611.07004.pdf).
 
-[[3](https://www.tensorflow.org/tutorials/generative/pix2pix)[] ](https://www.tensorflow.org/tutorials/generative/pix2pix)[Tensorflow](https://www.tensorflow.org/tutorials/generative/pix2pix)[ ](https://www.tensorflow.org/tutorials/generative/pix2pix)[Core Tutorials](https://www.tensorflow.org/tutorials/generative/pix2pix)[: Pix2pix](https://www.tensorflow.org/tutorials/generative/pix2pix)
+[[3] Tensorflow Core Tutorials: Pix2pix](https://www.tensorflow.org/tutorials/generative/pix2pix)[Tensorflow](https://www.tensorflow.org/tutorials/generative/pix2pix)[ ](https://www.tensorflow.org/tutorials/generative/pix2pix)[Core Tutorials](https://www.tensorflow.org/tutorials/generative/pix2pix)
 
-[[4\] ](https://github.com/ashukid/hed-edge-detector)[Github](https://github.com/ashukid/hed-edge-detector)[: ](https://github.com/ashukid/hed-edge-detector)[ashukid](https://github.com/ashukid/hed-edge-detector)[/](https://github.com/ashukid/hed-edge-detector)[hed](https://github.com/ashukid/hed-edge-detector)[-edge-detector](https://github.com/ashukid/hed-edge-detector)
+[[4] Github Repo: ashukid/hed-edge-detector ](https://github.com/ashukid/hed-edge-detector)
 
 
 
