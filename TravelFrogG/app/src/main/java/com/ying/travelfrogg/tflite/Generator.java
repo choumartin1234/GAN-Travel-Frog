@@ -23,52 +23,68 @@ import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 
 public abstract class Generator {
-    /** The model type used for generation. */
+    /**
+     * The model type used for generation.
+     */
     public enum Model {
         FLOAT,
         QUANTIZED
     }
 
-    /** The runtime device type used for executing generation. */
+    /**
+     * The runtime device type used for executing generation.
+     */
     public enum Device {
         CPU,
         NNAPI,
         GPU
     }
 
-    /** The loaded TensorFlow Lite model. */
+    /**
+     * The loaded TensorFlow Lite model.
+     */
     private MappedByteBuffer tfliteModel;
 
     private GpuDelegate gpuDelegate = null;         // if device GPU
     private NnApiDelegate nnApiDelegate = null;     // if device NNAPI
 
-    /** An instance of the driver class to run model inference with Tensorflow Lite. */
+    /**
+     * An instance of the driver class to run model inference with Tensorflow Lite.
+     */
     protected Interpreter tflite;
 
-    /** Options for configuring the Interpreter. */
+    /**
+     * Options for configuring the Interpreter.
+     */
     private final Interpreter.Options tfliteOptions = new Interpreter.Options();
 
     private final int imageSizeX;
     private final int imageSizeY;
 
-    /** Input image TensorBuffer. */
+    /**
+     * Input image TensorBuffer.
+     */
     private TensorImage inputImageBuffer;
 
-    /** Output image TensorBuffer. */
+    /**
+     * Output image TensorBuffer.
+     */
     private TensorImage outputImageBuffer;
 
     private TensorBuffer outputBuffer;
 
 
-    /** Gets the name of the model file stored in Assets. */
+    /**
+     * Gets the name of the model file stored in Assets.
+     */
     protected abstract String getModelPath();
 
     /**
      * Creates a generator with the provided configuration.
      *
-     * @param activity The current Activity.
-     * @param model The model to use for generation.
-     * @param device The device to use for generation.
+     * @param activity   The current Activity.
+     * @param model      The model to use for generation.
+     * @param device     The device to use for generation.
      * @param numThreads The number of threads to use for generation.
      * @return A generator with the desired configuration.
      */
@@ -81,7 +97,9 @@ public abstract class Generator {
         }
     }
 
-    /** Initializes a {@code Generator}. */
+    /**
+     * Initializes a {@code Generator}.
+     */
     protected Generator(Activity activity, Device device, int numThreads) throws IOException {
 
         /** Setup TF Lite */
@@ -111,6 +129,7 @@ public abstract class Generator {
         imageSizeY = inputShape[1];
         imageSizeX = inputShape[2];
         DataType inputDataType = tflite.getInputTensor(inputTensorIndex).dataType();
+        Log.d("inputDataType", inputDataType.toString());
         inputImageBuffer = new TensorImage(inputDataType);
 
         /** Set output image buffer */
@@ -121,11 +140,13 @@ public abstract class Generator {
 
         DataType outputDataType = tflite.getOutputTensor(outputTensorIndex).dataType();
         outputImageBuffer = new TensorImage(outputDataType);
-
+        Log.d("outputDataType", outputDataType.toString());
         outputBuffer = TensorBuffer.createFixedSize(outputShape, outputDataType);
     }
 
-    /** Loads input image. */
+    /**
+     * Loads input image.
+     */
     private TensorImage loadImage(final Bitmap bitmap) {
         // Loads bitmap into a TensorImage.
         inputImageBuffer.load(bitmap);
@@ -144,18 +165,34 @@ public abstract class Generator {
     public Bitmap generateImage(Bitmap drawing) {
         // load input bitmap
         inputImageBuffer = loadImage(drawing);
+        float[] a = inputImageBuffer.getTensorBuffer().getFloatArray();
+        Log.d("input float array length:",Integer.toString(a.length));
+        for (int i = 0; i < a.length; ++i) {
+            a[i] = a[i] / (float) 127.5 - 1;
+        }
 
+        //inputImageBuffer.
         // apply generator model for inference
         Trace.beginSection("runInference");
         long startTimeForReference = SystemClock.uptimeMillis();
         tflite.run(inputImageBuffer.getBuffer(), outputBuffer.getBuffer());
+        //tflite.run(inputImageBuffer.getBuffer(), outputBuffer.getBuffer());
 
-        byte[] byteArray = outputBuffer.getBuffer().array();
+        //float[] floatArray=outputBuffer.getBuffer().array();
 
+        //byte[] byteArray = outputBuffer.getBuffer().array();
+        float[] floatArray = outputBuffer.getFloatArray();
+        Log.d("output float array length:",Integer.toString(floatArray.length));
+
+        for (int i = 0; i < floatArray.length; ++i) {
+            floatArray[i] = 255 * (floatArray[i] * (float) 0.5 + (float)0.5);
+        }
+        /*
         for (int i = 0; i < 20; i++) {
             System.out.print(byteArray[i] + " ");
         }
         System.out.println(" ");
+        */
 
         long endTimeForReference = SystemClock.uptimeMillis();
         Trace.endSection();
@@ -170,12 +207,16 @@ public abstract class Generator {
 
         // TODO: Fix noise
         int[] intValues = new int[w * h];
-
-
+        //for (int i = 0; i < intValues.length; ++i) {
+        //    intValues[i] = (int) floatArray[i];
+        //}
         for (int i = 0, j = 0; i < intValues.length; i++) {
-            int r = byteArray[j] & 0xff; j++;
-            int g = byteArray[j] & 0xff; j++;
-            int b = byteArray[j] & 0xff; j++;
+            int r = (int) floatArray[j] & 0xff;
+            j++;
+            int g = (int) floatArray[j] & 0xff;
+            j++;
+            int b = (int) floatArray[j] & 0xff;
+            j++;
 
             intValues[i] = 0xff000000 | ((r << 16) | (g << 8) | b);
 
@@ -184,6 +225,23 @@ public abstract class Generator {
 //                System.out.println("intValue: " + intValues[i]);
 //            }
         }
+        /*
+        for (int i = 0, j = 0; i < intValues.length; i++) {
+            int r = byteArray[j] & 0xff;
+            j++;
+            int g = byteArray[j] & 0xff;
+            j++;
+            int b = byteArray[j] & 0xff;
+            j++;
+
+            intValues[i] = 0xff000000 | ((r << 16) | (g << 8) | b);
+
+//            if (i % 50 == 0) {
+//                System.out.println("byte: " + r + " " + g + " " + b);
+//                System.out.println("intValue: " + intValues[i]);
+//            }
+        }
+        */
 
         Log.d("BITMAP", "finish generating");
         generated.setPixels(intValues, 0, w, 0, 0, w, h);
