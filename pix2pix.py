@@ -28,7 +28,7 @@ parser.add_argument('--buffer', help='buffer size', default=400, type=int)
 parser.add_argument('--w', help='Image width', default=256, type=int)
 parser.add_argument('--h', help='Image height', default=256, type=int)
 parser.add_argument('--load', help='whether load from the latest checkpoint', action="store_true")
-
+parser.add_argument('--save',action='store_true')
 args = parser.parse_args()
 
 BUFFER_SIZE = args.buffer
@@ -245,13 +245,6 @@ def generate_images(model, test_input, tar):
     plt.savefig('pictures/test_{}.png'.format(cnt))
 
 
-import datetime
-
-log_dir = 'logs/'
-
-summary_writer = tf.summary.create_file_writer(log_dir + "fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
-
-
 @tf.function
 def train_step(input_image, target, epoch, step):
     with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
@@ -282,15 +275,6 @@ def train_step(input_image, target, epoch, step):
         tf.summary.scalar('disc_loss', disc_loss, step=epoch)
 
 
-checkpoint_dir = './training_checkpoints'
-checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt")
-checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
-                                 discriminator_optimizer=discriminator_optimizer,
-                                 generator=generator,
-                                 discriminator=discriminator)
-if args.load:
-    checkpoint.restore(tf.train.latest_checkpoint(checkpoint_dir))
-
 
 def fit(train_ds, epochs, test_ds):
     for epoch in range(epochs):
@@ -306,8 +290,29 @@ def fit(train_ds, epochs, test_ds):
     #checkpoint.save(file_prefix=checkpoint_prefix)
 
 
-EPOCHS = args.epoch
 def main():
+    import datetime
+
+    log_dir = 'logs/'
+
+    summary_writer = tf.summary.create_file_writer(log_dir + "fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
+
+    checkpoint_dir = './training_checkpoints'
+    checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt")
+    checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
+                                     discriminator_optimizer=discriminator_optimizer,
+                                     generator=generator,
+                                     discriminator=discriminator)
+
+    if args.load:
+        checkpoint.restore(tf.train.latest_checkpoint(checkpoint_dir))
+    if args.save:
+        converter=tf.lite.TFLiteConverter.from_keras_model(generator)
+        tflite_model = converter.convert()
+        open('generate_model.tflite', 'wb').write(tflite_model)
+        exit(0)
+    EPOCHS = args.epoch
+
     fit(train_dataset, EPOCHS, test_dataset)
 
 
