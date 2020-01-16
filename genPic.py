@@ -18,10 +18,13 @@ checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
                                  discriminator=discriminator)
 checkpoint.restore(tf.train.latest_checkpoint(checkpoint_dir))
 '''
+height = width = 256
 def generate(model, input):
     img = tf.io.read_file(input)
     img = tf.image.decode_image(img, channels=3)
-    img = tf.cast(img, tf.float32)
+    img = tf.cast(img, tf.float32)   #load
+    img = tf.image.resize(img, [height, width], method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)  #resize
+    img = (img / 127.5) - 1  #normalize
     img = img[tf.newaxis, :]
     prediction = model(img)
     plt.imshow(prediction[0] * 0.5 + 0.5)
