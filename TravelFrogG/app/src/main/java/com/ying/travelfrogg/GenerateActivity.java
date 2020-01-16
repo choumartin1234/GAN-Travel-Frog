@@ -52,7 +52,7 @@ public class GenerateActivity extends AppCompatActivity {
 //            is.close();
 
 
-            genImageView.setImageBitmap(inputImage);
+//            genImageView.setImageBitmap(inputImage);
         } catch (Exception e) {
             e.printStackTrace();
         }

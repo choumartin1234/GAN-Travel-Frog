@@ -12,6 +12,7 @@ import org.tensorflow.lite.Interpreter;
 import org.tensorflow.lite.nnapi.NnApiDelegate;
 import org.tensorflow.lite.gpu.GpuDelegate;
 import org.tensorflow.lite.support.common.FileUtil;
+import org.tensorflow.lite.support.common.ops.NormalizeOp;
 import org.tensorflow.lite.support.image.ImageProcessor;
 import org.tensorflow.lite.support.image.TensorImage;
 import org.tensorflow.lite.support.image.ops.ResizeOp;
@@ -157,6 +158,7 @@ public abstract class Generator {
                 new ImageProcessor.Builder()
                         .add(new ResizeWithCropOrPadOp(cropSize, cropSize))
                         .add(new ResizeOp(imageSizeX, imageSizeY, ResizeOp.ResizeMethod.NEAREST_NEIGHBOR))
+                        .add(new NormalizeOp(127.5f, 127.5f))
                         .build();
 
         return imageProcessor.process(inputImageBuffer);
@@ -165,11 +167,6 @@ public abstract class Generator {
     public Bitmap generateImage(Bitmap drawing) {
         // load input bitmap
         inputImageBuffer = loadImage(drawing);
-        float[] a = inputImageBuffer.getTensorBuffer().getFloatArray();
-        Log.d("input float array length:",Integer.toString(a.length));
-        for (int i = 0; i < a.length; ++i) {
-            a[i] = a[i] / (float) 127.5 - 1;
-        }
 
         //inputImageBuffer.
         // apply generator model for inference
