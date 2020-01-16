@@ -13,6 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
+        android:onClick="goToTravelMode"
         android:text="@string/travel_mode"
         app:layout_constraintBottom_toTopOf="@+id/buttonDark"
         app:layout_constraintEnd_toEndOf="parent"

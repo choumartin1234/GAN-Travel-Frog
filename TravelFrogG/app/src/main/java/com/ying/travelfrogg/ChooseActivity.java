@@ -28,6 +28,12 @@ public class ChooseActivity extends AppCompatActivity {
         textView.setText("为你的" + name + "选择旅游的模式...");
     }
 
+    public void goToTravelMode(View view) {
+        Intent intent = new Intent(this, TravelActivity.class);
+        intent.putExtra(EXTRA_MESSAGE, name);
+        startActivity(intent);
+    }
+
     public void goToDarkMode(View view) {
         Intent intent = new Intent(this, DrawActivity.class);
         intent.putExtra(EXTRA_MESSAGE, name);
