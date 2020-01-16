@@ -2,14 +2,20 @@ from pix2pix import *
 import os
 import tensorflow as tf
 import matplotlib as mpl
+import argparse
 from matplotlib import pyplot as plt
+
+parser = argparse.ArgumentParser(
+    description='This is a pix2pix model,Reference:https://www.tensorflow.org/tutorials/generative/pix2pix')
+parser.add_argument('--path', help='input file path', default='a.jpg', type=str)
+args = parser.parse_args()
 
 generator = Generator()
 discriminator = Discriminator()
 generator_optimizer = tf.keras.optimizers.Adam(2e-4,0.5)
 discriminator_optimizer = tf.keras.optimizers.Adam(2e-4,0.5)
 
-'''
+
 checkpoint_dir = './training_checkpoints'
 checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt")
 checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
@@ -17,7 +23,7 @@ checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
                                  generator=generator,
                                  discriminator=discriminator)
 checkpoint.restore(tf.train.latest_checkpoint(checkpoint_dir))
-'''
+
 height = width = 256
 def generate(model, input):
     img = tf.io.read_file(input)
@@ -30,5 +36,5 @@ def generate(model, input):
     plt.imshow(prediction[0] * 0.5 + 0.5)
     plt.savefig('gen.png')
 
-PATH = 'a.jpg'
+PATH = args.path
 generate(generator,PATH)
