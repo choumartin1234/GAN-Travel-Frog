@@ -1,20 +1,26 @@
 # GAN-Travel-Frog
-2020 Google Machine Learning Winter Camp Project. This is an Android Application using CGAN model for the Travel Frog game. This Repo mainly contains four parts :
+2020 Google Machine Learning Winter Camp Project. This is an Android Application using **CGAN** model for the Travel Frog game. This Repo mainly contains four parts :
 
-+ ```App``` : A Travel Frog Game based on Android Studio, using **TensorFlow Lite 2.0** to interpret generator model on mobile phones.
++ ```App``` : A Travel Frog Game based on Android Studio, using **TensorFlow Lite 2.0** to convert a tflite model , and interpret pretrained generator model on mobile phones.
 
 + ```pix2pix.py``` : Our main model. A **Conditional Generative Adversarial Net** used for generating pictures based on sketch pictures.
 
-+ ```HEDModel``` : A pretrained Holistically-nested edge detection Model (**HED**) , used to generate dataset
++ ```HEDModel/``` : A pretrained Holistically-nested edge detection Model (**HED**) , used to generate dataset
 
-+ ```Others``` : Other files for small tasks such as testing and data preprocessing
++ ```Others``` : Other files for small tasks such as testing and data preprocessing, etc
+
+  + ```genPic.py``` to generate predicted image by saved generator model
 
   + ```func_test.py``` to test pix2pix functions and model
 
   + ```split.py``` to split dataset into training and testing set
 
   + ```concat.py``` to concatenate sketch pic and real pic together for input data.
-
+  
+  + ```convert.py``` to convert saved model into tflite model
+  
+  + ```testLite.py``` to test for converted tflite model
+  
     
 
 ### Our Model 
@@ -47,8 +53,6 @@ Every ```*.jpg``` should be a picture of the form of $$2W \times H$$,  with the 
 
 ### Training
 
-#### Training
-
 Usage and optional arguments
 
 ``````bash
@@ -76,6 +80,12 @@ After Each epoch of training, we will randomly pick one picture from test datase
 
 
 
+#### Conclusion and Results
+
+See [Our Poster](pic/Poster.pdf) for detailed conclusion and result
+
+
+
 ### Save Model to TensorFlow Lite
 
 Transform the generator model to TensorFlow Lite and put it into ```app/src/assets``` to run model on the Travel Frog Application. You can also use our pretrained model.
@@ -94,15 +104,17 @@ Use ```Android Studio``` to build the app. You can also download our apk. Have F
 
 [[2] Isola, Phillip, et al. "Image-to-image translation with conditional adversarial networks." Proceedings of the IEEE conference on computer vision and pattern recognition. 2017](https://arxiv.org/pdf/1611.07004.pdf).
 
-[[3] Tensorflow Core Tutorials: Pix2pix](https://www.tensorflow.org/tutorials/generative/pix2pix)
+[[3] TensorFlow Core Tutorials: Pix2pix](https://www.tensorflow.org/tutorials/generative/pix2pix)
 
 [[4] Github Repo: ashukid/hed-edge-detector ](https://github.com/ashukid/hed-edge-detector)
+
+[[5] TensorFlow Lite Guide](https://www.tensorflow.org/lite/guide)
 
 
 
 #### Arthurs
 
-- EnHsien Chou, Tsinghua University, Department of Computer Science and Technology
+- Enhsien Chou, Tsinghua University, Department of Computer Science and Technology
 - Ying Chen, Tsinghua University, Department of Computer Science and Technology
 - Zhexin Zhang, Tsinghua University, Department of Computer Science and Technology
 
