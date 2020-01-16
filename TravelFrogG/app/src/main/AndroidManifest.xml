@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_frog_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".GenerateActivity"></activity>
+        <activity android:name=".ChooseActivity"></activity>
+        <activity android:name=".GenerateActivity" />
         <activity android:name=".DrawActivity" />
         <activity android:name=".NameActivity" />
         <activity android:name=".MainActivity">
@@ -21,11 +22,11 @@
         </activity>
     </application>
     <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
 
     <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
 
 </manifest>

@@ -19,7 +19,7 @@ public class NameActivity extends AppCompatActivity {
 
     public void sendName(View view) {
         // Do something in response to button
-        Intent intent = new Intent(this, DrawActivity.class);
+        Intent intent = new Intent(this, ChooseActivity.class);
         EditText editText = findViewById(R.id.editText);
         String message = editText.getText().toString();
         intent.putExtra(EXTRA_MESSAGE, message);

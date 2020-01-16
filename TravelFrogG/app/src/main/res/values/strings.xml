@@ -5,4 +5,6 @@
     <string name="default_name">蛙蛙</string>
     <string name="confirm">确认</string>
     <string name="save">蛙蛙，启程！</string>
+    <string name="travel_mode">Travel</string>
+    <string name="dark_mode">Deep Dark FANTASY!!!</string>
 </resources>

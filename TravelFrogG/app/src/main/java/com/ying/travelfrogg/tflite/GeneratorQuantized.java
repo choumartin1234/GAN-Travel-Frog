@@ -14,6 +14,6 @@ public class GeneratorQuantized extends Generator {
     @Override
     protected String getModelPath() {
         // from download.gradle or asset
-        return "pix2pix_v1_1.0_quant.tflite";
+        return "pix2pix_v1_1.0.tflite";
     }
 }
