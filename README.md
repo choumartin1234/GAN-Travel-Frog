@@ -1,4 +1,6 @@
 # GAN-Travel-Frog
+![](pic/demo.png)
+
 2020 Google Machine Learning Winter Camp Project. This is an Android Application using **CGAN** model for the Travel Frog game. This Repo mainly contains four parts :
 
 + ```App``` : A Travel Frog Game based on Android Studio, using **TensorFlow Lite 2.0** to convert a tflite model , and interpret pretrained generator model on mobile phones.
